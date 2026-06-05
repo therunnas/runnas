@@ -1,0 +1,36 @@
+---
+import { FiGithub } from "react-icons/fi";
+
+interface SocialLink {
+  label: string;
+  href: string;
+  icon: typeof FiGithub;
+}
+
+// Adicione novas redes aqui — a estrutura já fica pronta.
+// (evite contatos que revelem o nome real, ex.: email pessoal)
+const links: SocialLink[] = [
+  {
+    label: "GitHub",
+    href: "https://github.com/therunnas",
+    icon: FiGithub,
+  },
+];
+---
+
+<div class="flex items-center gap-4">
+  {
+    links.map(({ label, href, icon: Icon }) => (
+      <a
+        href={href}
+        target={href.startsWith("mailto:") ? undefined : "_blank"}
+        rel={href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
+        aria-label={label}
+        title={label}
+        class="text-neutral-500 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100"
+      >
+        <Icon size={20} aria-hidden="true" />
+      </a>
+    ))
+  }
+</div>

@@ -1,0 +1,172 @@
+---
+import Layout from "../layouts/Layout.astro";
+import SocialLinks from "../components/SocialLinks.astro";
+import LanguageIcons from "../components/LanguageIcons.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+
+interface Project {
+  title: string;
+  description: string;
+  tags: string[];
+  sourceUrl?: string;
+  liveUrl?: string;
+}
+
+const projects: Project[] = [
+  {
+    title: "Crypto Monitor Simple",
+    description:
+      "Monitor de portfolio da Binance com layout de terminal, empacotado em .exe.",
+    tags: ["Python", "GUI"],
+    sourceUrl: "https://github.com/therunnas/crypto-monitor-simple",
+  },
+  {
+    title: "Otimização Runnas",
+    description:
+      "Ferramenta de otimização de performance para CS2 com GUI dark e scripts de limpeza.",
+    tags: ["Python", "Windows"],
+    sourceUrl: "https://github.com/therunnas",
+  },
+  {
+    title: "2K Command OS",
+    description:
+      "Painel admin SaaS interno do 2K Studios para financeiro, produções, clientes e agenda.",
+    tags: ["Next.js 15", "React 19", "TypeScript", "Prisma", "PostgreSQL"],
+  },
+  {
+    title: "2K Command Center",
+    description: "Office em pixel-art com 8 agentes de IA nomeados (V8.1).",
+    tags: ["Phaser 3", "Tiled"],
+  },
+  {
+    title: "2K-OS Vault (Obsidian)",
+    description:
+      "Vault em estrutura PARA com Dataview, Templater e integração MCP com o Claude Desktop.",
+    tags: ["Obsidian", "Dataview", "Templater", "MCP"],
+  },
+];
+
+// Ensaios: solte arquivos .md em src/pages/essays/ com frontmatter `title` e
+// `date` (YYYY-MM-DD) usando `layout: ../../layouts/EssayLayout.astro` e eles
+// aparecem aqui automaticamente.
+// import.meta.glob não quebra quando a pasta está vazia (Astro.glob quebra).
+interface PostModule {
+  frontmatter: { title: string; date: string };
+  url?: string;
+}
+const essays = Object.values(
+  import.meta.glob<PostModule>("./essays/*.md", { eager: true }),
+)
+  .map((post) => ({
+    title: post.frontmatter.title,
+    date: post.frontmatter.date,
+    url: post.url ?? "#",
+  }))
+  .sort((a, b) => (a.date < b.date ? 1 : -1));
+
+const dateFormatter = new Intl.DateTimeFormat("pt-BR", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+---
+
+<Layout title="Runnas">
+  <!-- 1. Hero -->
+  <section class="flex flex-col items-center text-center">
+    <img
+      src="/me.webp"
+      alt="Foto de Runnas"
+      width="96"
+      height="96"
+      class="h-24 w-24 rounded-full object-cover ring-1 ring-neutral-200 dark:ring-neutral-800"
+    />
+    <h1 class="mt-6 text-2xl font-semibold">
+      Olá, eu sou o Runnas
+    </h1>
+    <div class="mt-4">
+      <SocialLinks />
+    </div>
+  </section>
+
+  <!-- 2. Sobre mim -->
+  <section
+    class="mt-16 space-y-4 leading-relaxed text-neutral-700 dark:text-neutral-300"
+  >
+    <h2
+      class="text-xs font-semibold uppercase tracking-widest text-neutral-400"
+    >
+      Sobre mim
+    </h2>
+    <p>
+      Toco a <strong>2K Studios</strong>, uma produtora audiovisual em Camboriú.
+      É de onde vem meu trabalho e a maior parte do meu dia.
+    </p>
+    <p>
+      Programação é hobby genuíno, paralelo ao negócio. Gosto de construir,
+      aprender tecnologias novas e explorar automação — sem pressa e sem
+      pretensão comercial. As coisas aqui nascem da curiosidade.
+    </p>
+  </section>
+
+  <!-- 3. Linguagens -->
+  <section class="mt-16">
+    <h2
+      class="mb-6 text-xs font-semibold uppercase tracking-widest text-neutral-400"
+    >
+      Linguagens com as quais trabalho
+    </h2>
+    <LanguageIcons />
+  </section>
+
+  <!-- 4. Projetos -->
+  <section class="mt-16">
+    <h2
+      class="mb-6 text-xs font-semibold uppercase tracking-widest text-neutral-400"
+    >
+      Projetos
+    </h2>
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      {projects.map((project) => <ProjectCard {...project} />)}
+    </div>
+  </section>
+
+  <!-- 5. Ensaios -->
+  <section class="mt-16">
+    <h2
+      class="mb-6 text-xs font-semibold uppercase tracking-widest text-neutral-400"
+    >
+      Ensaios
+    </h2>
+    {
+      essays.length > 0 ? (
+        <ul class="space-y-2">
+          {essays.map((essay) => (
+            <li class="flex items-baseline justify-between gap-4 text-sm">
+              <a
+                href={essay.url}
+                class="underline underline-offset-4 hover:no-underline"
+              >
+                {essay.title}
+              </a>
+              <time
+                datetime={essay.date}
+                class="shrink-0 text-neutral-400 dark:text-neutral-600"
+              >
+                {dateFormatter.format(new Date(essay.date))}
+              </time>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="text-sm text-neutral-500 dark:text-neutral-400">Em breve.</p>
+      )
+    }
+  </section>
+
+  <footer
+    class="mt-24 border-t border-neutral-200 pt-6 text-xs text-neutral-400 dark:border-neutral-800"
+  >
+    Brazil · feito com Astro
+  </footer>
+</Layout>

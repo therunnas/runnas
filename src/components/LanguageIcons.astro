@@ -1,0 +1,52 @@
+---
+import {
+  SiPython,
+  SiTypescript,
+  SiJavascript,
+  SiRust,
+  SiNixos,
+} from "react-icons/si";
+
+interface Language {
+  name: string;
+  query: string; // valor usado em ?language= no GitHub
+  icon: typeof SiPython;
+  note?: string;
+}
+
+const languages: Language[] = [
+  { name: "Python", query: "Python", icon: SiPython },
+  { name: "TypeScript", query: "TypeScript", icon: SiTypescript },
+  { name: "JavaScript", query: "JavaScript", icon: SiJavascript },
+  { name: "Rust", query: "Rust", icon: SiRust, note: "estudando" },
+  { name: "Nix", query: "Nix", icon: SiNixos, note: "estudando" },
+];
+
+const repoBase = "https://github.com/therunnas?tab=repositories&language=";
+---
+
+<ul class="grid grid-cols-3 gap-4 sm:grid-cols-5">
+  {
+    languages.map(({ name, query, icon: Icon, note }) => (
+      <li>
+        <a
+          href={`${repoBase}${encodeURIComponent(query)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="group flex flex-col items-center gap-1.5 text-neutral-500 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100"
+        >
+          <Icon size={28} aria-hidden="true" />
+          <span class="text-xs">
+            {name}
+            {note && (
+              <span class="text-neutral-400 dark:text-neutral-600">
+                {" "}
+                ({note})
+              </span>
+            )}
+          </span>
+        </a>
+      </li>
+    ))
+  }
+</ul>
