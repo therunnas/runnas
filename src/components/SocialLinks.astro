@@ -18,18 +18,18 @@ const links: SocialLink[] = [
 ];
 ---
 
-<div class="flex items-center gap-4">
+<div class="flex items-center gap-4 text-2xl">
   {
     links.map(({ label, href, icon: Icon }) => (
       <a
         href={href}
-        target={href.startsWith("mailto:") ? undefined : "_blank"}
-        rel={href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
+        target="_blank"
+        rel="noopener noreferrer"
         aria-label={label}
         title={label}
-        class="text-neutral-500 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100"
+        class="hover:opacity-60"
       >
-        <Icon size={20} aria-hidden="true" />
+        <Icon aria-hidden="true" />
       </a>
     ))
   }

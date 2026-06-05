@@ -31,7 +31,7 @@ const projects: Project[] = [
     title: "2K Command OS",
     description:
       "Painel admin SaaS interno do 2K Studios para financeiro, produções, clientes e agenda.",
-    tags: ["Next.js 15", "React 19", "TypeScript", "Prisma", "PostgreSQL"],
+    tags: ["Next.js", "React", "TypeScript", "Prisma", "PostgreSQL"],
   },
   {
     title: "2K Command Center",
@@ -63,110 +63,92 @@ const essays = Object.values(
     url: post.url ?? "#",
   }))
   .sort((a, b) => (a.date < b.date ? 1 : -1));
-
-const dateFormatter = new Intl.DateTimeFormat("pt-BR", {
-  year: "numeric",
-  month: "long",
-  day: "numeric",
-});
 ---
 
 <Layout title="Runnas">
-  <!-- 1. Hero -->
-  <section class="flex flex-col items-center text-center">
-    <img
-      src="/me.webp"
-      alt="Foto de Runnas"
-      width="96"
-      height="96"
-      class="h-24 w-24 rounded-full object-cover ring-1 ring-neutral-200 dark:ring-neutral-800"
-    />
-    <h1 class="mt-6 text-2xl font-semibold">
-      Olá, eu sou o Runnas
-    </h1>
-    <div class="mt-4">
-      <SocialLinks />
+  <!-- Hero + Sobre mim -->
+  <div class="intro-about-grid">
+    <!-- intro -->
+    <div class="box-shadow border border-black bg-white">
+      <div class="flex items-center gap-4 p-4">
+        <img
+          src="/me.webp"
+          alt="Foto de Runnas"
+          width="80"
+          height="80"
+          class="h-20 w-20 rounded-full border border-black object-cover"
+        />
+        <p class="text-xl sm:text-2xl">
+          Olá, eu sou o <span class="font-bold">Runnas</span> na internet.
+        </p>
+      </div>
+      <div class="border-t border-black p-4">
+        <SocialLinks />
+      </div>
     </div>
-  </section>
 
-  <!-- 2. Sobre mim -->
-  <section
-    class="mt-16 space-y-4 leading-relaxed text-neutral-700 dark:text-neutral-300"
-  >
-    <h2
-      class="text-xs font-semibold uppercase tracking-widest text-neutral-400"
-    >
-      Sobre mim
-    </h2>
-    <p>
-      Toco a <strong>2K Studios</strong>, uma produtora audiovisual em Camboriú.
-      É de onde vem meu trabalho e a maior parte do meu dia.
-    </p>
-    <p>
-      Programação é hobby genuíno, paralelo ao negócio. Gosto de construir,
-      aprender tecnologias novas e explorar automação — sem pressa e sem
-      pretensão comercial. As coisas aqui nascem da curiosidade.
-    </p>
-  </section>
+    <!-- sobre -->
+    <div class="box-shadow border border-black bg-black p-4 text-white">
+      <h2 class="mb-3 text-lg font-bold">Sobre mim</h2>
+      <p class="leading-relaxed">
+        Toco a <span class="text-highlight">2K Studios</span>, uma produtora
+        audiovisual em Camboriú. É de onde vem meu trabalho e a maior parte do
+        meu dia.
+      </p>
+    </div>
+  </div>
 
-  <!-- 3. Linguagens -->
-  <section class="mt-16">
-    <h2
-      class="mb-6 text-xs font-semibold uppercase tracking-widest text-neutral-400"
-    >
-      Linguagens com as quais trabalho
-    </h2>
+  <p class="mt-8 leading-relaxed">
+    Programação é hobby genuíno, paralelo ao negócio: gosto de construir,
+    aprender tecnologias novas e explorar <span class="text-highlight"
+      >automação</span
+    >. As coisas aqui nascem da curiosidade, sem pressa e sem pretensão
+    comercial.
+  </p>
+
+  <!-- Linguagens -->
+  <section class="mt-12">
+    <p class="mb-4">Linguagens com as quais trabalho</p>
     <LanguageIcons />
   </section>
 
-  <!-- 4. Projetos -->
-  <section class="mt-16">
-    <h2
-      class="mb-6 text-xs font-semibold uppercase tracking-widest text-neutral-400"
-    >
-      Projetos
-    </h2>
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+  <!-- Projetos -->
+  <section class="mt-12">
+    <h2 class="mb-5 text-xl font-bold sm:text-2xl">Projetos</h2>
+    <div class="flex gap-5 overflow-x-auto pb-2">
       {projects.map((project) => <ProjectCard {...project} />)}
     </div>
+    <a
+      href="https://github.com/therunnas?tab=repositories"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="mt-3 inline-block text-sm underline hover:no-underline"
+    >
+      Ver mais no GitHub
+    </a>
   </section>
 
-  <!-- 5. Ensaios -->
-  <section class="mt-16">
-    <h2
-      class="mb-6 text-xs font-semibold uppercase tracking-widest text-neutral-400"
-    >
-      Ensaios
-    </h2>
+  <!-- Ensaios -->
+  <section class="mt-12">
+    <h2 class="mb-5 text-xl font-bold sm:text-2xl">Ensaios</h2>
     {
       essays.length > 0 ? (
-        <ul class="space-y-2">
+        <div class="flex flex-col gap-3">
           {essays.map((essay) => (
-            <li class="flex items-baseline justify-between gap-4 text-sm">
-              <a
-                href={essay.url}
-                class="underline underline-offset-4 hover:no-underline"
-              >
-                {essay.title}
-              </a>
-              <time
-                datetime={essay.date}
-                class="shrink-0 text-neutral-400 dark:text-neutral-600"
-              >
-                {dateFormatter.format(new Date(essay.date))}
+            <a
+              href={essay.url}
+              class="box-shadow flex items-center justify-between gap-4 border border-black bg-white px-3 py-2 text-sm hover:bg-black hover:text-white"
+            >
+              <span>{essay.title}</span>
+              <time datetime={essay.date} class="shrink-0">
+                {essay.date}
               </time>
-            </li>
+            </a>
           ))}
-        </ul>
+        </div>
       ) : (
-        <p class="text-sm text-neutral-500 dark:text-neutral-400">Em breve.</p>
+        <p class="text-sm">Em breve.</p>
       )
     }
   </section>
-
-  <footer
-    class="mt-24 border-t border-neutral-200 pt-6 text-xs text-neutral-400 dark:border-neutral-800"
-  >
-    Brazil · feito com Astro
-  </footer>
 </Layout>

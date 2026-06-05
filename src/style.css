@@ -1,0 +1,49 @@
+* {
+  font-family: "Fira Code", monospace !important;
+}
+
+body {
+  /* fundo de pontos (equivale ao dots.png 30px da referência) */
+  background-image: radial-gradient(hsla(0, 0%, 0%, 0.18) 1px, transparent 1px);
+  background-position: 0 0;
+  background-size: 30px 30px;
+  animation: fade-in 1s ease-in-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.box-shadow {
+  box-shadow: 3px 3px hsla(0, 0%, 0%, 0.5);
+}
+
+@media (min-width: 640px) {
+  .box-shadow {
+    box-shadow: 5px 5px hsla(0, 0%, 0%, 0.5);
+  }
+}
+
+.text-highlight {
+  color: white;
+  background-color: black;
+  padding: 0.5px 2px;
+}
+
+/* hero (intro) + sobre lado a lado no desktop */
+.intro-about-grid {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .intro-about-grid {
+    grid-template-columns: 3fr 2fr;
+  }
+}
