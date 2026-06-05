@@ -46,6 +46,20 @@ const tracks = Object.entries(files)
         </div>
 
         <span id="title" class="flex-1 truncate" />
+
+        <div class="flex shrink-0 items-center gap-1.5">
+          <button id="vol-btn" class="player-btn" aria-label="Mudo" />
+          <input
+            id="vol"
+            class="vol-slider"
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            aria-label="Volume"
+          />
+        </div>
+
         <span id="time" class="shrink-0 tabular-nums">0:00 / 0:00</span>
       </div>
 
@@ -67,9 +81,19 @@ const tracks = Object.entries(files)
           '<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M4 2l10 6-10 6z"/></svg>';
         var iconPause =
           '<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><rect x="3" y="2" width="4" height="12"/><rect x="9" y="2" width="4" height="12"/></svg>';
+        var iconVol =
+          '<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M2 6v4h2.5L8 13V3L4.5 6z"/><path d="M10.5 5.5a3 3 0 010 5" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>';
+        var iconMuted =
+          '<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M2 6v4h2.5L8 13V3L4.5 6z"/><path d="M10.5 6l3 4M13.5 6l-3 4" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>';
+
+        var volBtn = document.getElementById("vol-btn");
+        var volSlider = document.getElementById("vol");
 
         var i = 0;
         var userPaused = false;
+
+        var stored = parseFloat(localStorage.getItem("runnas-vol"));
+        var lastVol = isNaN(stored) ? 0.7 : stored;
 
         function fmt(s) {
           if (!s || isNaN(s)) return "0:00";
@@ -83,6 +107,28 @@ const tracks = Object.entries(files)
           toggle.innerHTML = audio.paused ? iconPlay : iconPause;
           toggle.setAttribute("aria-label", audio.paused ? "Tocar" : "Pausar");
         }
+
+        function setVolIcon() {
+          var muted = audio.volume === 0;
+          volBtn.innerHTML = muted ? iconMuted : iconVol;
+          volBtn.setAttribute("aria-label", muted ? "Ativar som" : "Mudo");
+        }
+
+        function applyVolume(v, persist) {
+          v = Math.max(0, Math.min(1, v));
+          audio.volume = v;
+          volSlider.value = v;
+          if (v > 0) lastVol = v;
+          if (persist) localStorage.setItem("runnas-vol", v);
+          setVolIcon();
+        }
+
+        volSlider.addEventListener("input", function () {
+          applyVolume(parseFloat(volSlider.value), true);
+        });
+        volBtn.addEventListener("click", function () {
+          applyVolume(audio.volume === 0 ? lastVol || 0.7 : 0, true);
+        });
 
         function load(idx, play) {
           i = ((idx % tracks.length) + tracks.length) % tracks.length;
@@ -127,6 +173,7 @@ const tracks = Object.entries(files)
 
         load(0, false);
         setIcon();
+        applyVolume(lastVol, false);
 
         // Autoplay (quase sempre bloqueado) → fallback: inicia na 1ª interação.
         audio.play().catch(function () {
@@ -170,5 +217,11 @@ const tracks = Object.entries(files)
   .player-btn:hover {
     background: black;
     color: white;
+  }
+  .vol-slider {
+    width: 64px;
+    height: 6px;
+    cursor: pointer;
+    accent-color: black;
   }
 </style>
