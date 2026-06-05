@@ -1,0 +1,174 @@
+---
+// Auto-descobre faixas: dropar arquivos de áudio em src/music/ e eles aparecem.
+// (sem faixas, o player simplesmente não renderiza)
+const files = import.meta.glob("../music/*.{mp3,wav,ogg,m4a}", {
+  eager: true,
+  query: "?url",
+  import: "default",
+});
+
+const tracks = Object.entries(files)
+  .map(([path, url]) => ({
+    title: (path.split("/").pop() ?? "")
+      .replace(/\.[^.]+$/, "")
+      .replace(/[-_]+/g, " ")
+      .trim(),
+    src: url as string,
+  }))
+  .sort((a, b) => a.title.localeCompare(b.title));
+---
+
+{
+  tracks.length > 0 && (
+    <div
+      id="player"
+      class="box-shadow sticky top-0 z-50 mb-8 border border-black bg-white px-4 py-2"
+    >
+      <div id="seek" class="seek" role="slider" aria-label="Progresso">
+        <div id="seek-fill" class="seek-fill" />
+      </div>
+
+      <div class="mt-2 flex items-center gap-3 text-sm">
+        <div class="flex items-center gap-1">
+          <button id="prev" class="player-btn" aria-label="Anterior">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <rect x="2" y="2" width="2" height="12" />
+              <path d="M14 2 5 8l9 6z" />
+            </svg>
+          </button>
+          <button id="toggle" class="player-btn" aria-label="Tocar" />
+          <button id="next" class="player-btn" aria-label="Próxima">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <rect x="12" y="2" width="2" height="12" />
+              <path d="M2 2l9 6-9 6z" />
+            </svg>
+          </button>
+        </div>
+
+        <span id="title" class="flex-1 truncate" />
+        <span id="time" class="shrink-0 tabular-nums">0:00 / 0:00</span>
+      </div>
+
+      <audio id="audio" preload="metadata" />
+    </div>
+
+    <script is:inline define:vars={{ tracks }}>
+      (function () {
+        if (!tracks || !tracks.length) return;
+
+        var audio = document.getElementById("audio");
+        var seek = document.getElementById("seek");
+        var fill = document.getElementById("seek-fill");
+        var toggle = document.getElementById("toggle");
+        var titleEl = document.getElementById("title");
+        var timeEl = document.getElementById("time");
+
+        var iconPlay =
+          '<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M4 2l10 6-10 6z"/></svg>';
+        var iconPause =
+          '<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><rect x="3" y="2" width="4" height="12"/><rect x="9" y="2" width="4" height="12"/></svg>';
+
+        var i = 0;
+        var userPaused = false;
+
+        function fmt(s) {
+          if (!s || isNaN(s)) return "0:00";
+          s = Math.floor(s);
+          var m = Math.floor(s / 60);
+          var sec = s % 60;
+          return m + ":" + (sec < 10 ? "0" : "") + sec;
+        }
+
+        function setIcon() {
+          toggle.innerHTML = audio.paused ? iconPlay : iconPause;
+          toggle.setAttribute("aria-label", audio.paused ? "Tocar" : "Pausar");
+        }
+
+        function load(idx, play) {
+          i = ((idx % tracks.length) + tracks.length) % tracks.length;
+          audio.src = tracks[i].src;
+          titleEl.textContent = tracks[i].title;
+          if (play) audio.play().catch(function () {});
+        }
+
+        toggle.addEventListener("click", function () {
+          if (audio.paused) {
+            audio.play().catch(function () {});
+            userPaused = false;
+          } else {
+            audio.pause();
+            userPaused = true;
+          }
+        });
+        document.getElementById("prev").addEventListener("click", function () {
+          load(i - 1, true);
+        });
+        document.getElementById("next").addEventListener("click", function () {
+          load(i + 1, true);
+        });
+        audio.addEventListener("ended", function () {
+          load(i + 1, true);
+        });
+        audio.addEventListener("play", setIcon);
+        audio.addEventListener("pause", setIcon);
+        audio.addEventListener("timeupdate", function () {
+          var d = audio.duration || 0;
+          fill.style.width = d ? (audio.currentTime / d) * 100 + "%" : "0%";
+          timeEl.textContent = fmt(audio.currentTime) + " / " + fmt(d);
+        });
+        audio.addEventListener("loadedmetadata", function () {
+          timeEl.textContent = "0:00 / " + fmt(audio.duration);
+        });
+        seek.addEventListener("click", function (e) {
+          var rect = seek.getBoundingClientRect();
+          var ratio = (e.clientX - rect.left) / rect.width;
+          if (audio.duration) audio.currentTime = ratio * audio.duration;
+        });
+
+        load(0, false);
+        setIcon();
+
+        // Autoplay (quase sempre bloqueado) → fallback: inicia na 1ª interação.
+        audio.play().catch(function () {
+          var evs = ["click", "keydown", "scroll", "touchstart"];
+          var start = function () {
+            if (!userPaused && audio.paused) audio.play().catch(function () {});
+            evs.forEach(function (ev) {
+              document.removeEventListener(ev, start);
+            });
+          };
+          evs.forEach(function (ev) {
+            document.addEventListener(ev, start, { passive: true });
+          });
+        });
+      })();
+    </script>
+  )
+}
+
+<style>
+  .seek {
+    height: 6px;
+    border: 1px solid black;
+    background: white;
+    cursor: pointer;
+  }
+  .seek-fill {
+    height: 100%;
+    width: 0%;
+    background: black;
+  }
+  .player-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border: 1px solid black;
+    background: white;
+    cursor: pointer;
+  }
+  .player-btn:hover {
+    background: black;
+    color: white;
+  }
+</style>

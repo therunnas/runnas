@@ -1,5 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import MusicPlayer from "../components/MusicPlayer.astro";
 import SocialLinks from "../components/SocialLinks.astro";
 import LanguageIcons from "../components/LanguageIcons.astro";
 import ProjectCard from "../components/ProjectCard.astro";
@@ -66,6 +67,8 @@ const essays = Object.values(
 ---
 
 <Layout title="Runnas">
+  <MusicPlayer />
+
   <!-- Hero + Sobre mim -->
   <div class="intro-about-grid">
     <!-- intro -->
