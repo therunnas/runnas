@@ -51,12 +51,15 @@ const projects: Project[] = [
 // `date` (YYYY-MM-DD) usando `layout: ../../layouts/EssayLayout.astro` e eles
 // aparecem aqui automaticamente.
 // import.meta.glob não quebra quando a pasta está vazia (Astro.glob quebra).
+// `!**/_*.md` ignora arquivos prefixados com `_` (ex.: _README.md, rascunhos).
 interface PostModule {
   frontmatter: { title: string; date: string };
   url?: string;
 }
 const essays = Object.values(
-  import.meta.glob<PostModule>("./essays/*.md", { eager: true }),
+  import.meta.glob<PostModule>(["./essays/*.md", "!**/_*.md"], {
+    eager: true,
+  }),
 )
   .map((post) => ({
     title: post.frontmatter.title,
