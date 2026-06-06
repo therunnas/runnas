@@ -1,0 +1,7 @@
+title: Crypto Monitor Simple
+description: Monitor de portfolio da Binance com layout de terminal, empacotado em .exe.
+tags:
+  - Python
+  - GUI
+sourceUrl: https://github.com/therunnas/crypto-monitor-simple
+order: 1

@@ -1,0 +1,9 @@
+title: 2K Command OS
+description: Painel admin SaaS interno do 2K Studios para financeiro, produções, clientes e agenda.
+tags:
+  - Next.js
+  - React
+  - TypeScript
+  - Prisma
+  - PostgreSQL
+order: 3
