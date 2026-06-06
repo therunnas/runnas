@@ -1,10 +1,10 @@
 ---
-import { FiGithub } from "react-icons/fi";
+import { Icon } from "astro-icon/components";
 
 interface SocialLink {
   label: string;
   href: string;
-  icon: typeof FiGithub;
+  icon: string; // nome do ícone Iconify (set:nome)
 }
 
 // Adicione novas redes aqui — a estrutura já fica pronta.
@@ -13,14 +13,14 @@ const links: SocialLink[] = [
   {
     label: "GitHub",
     href: "https://github.com/therunnas",
-    icon: FiGithub,
+    icon: "feather:github",
   },
 ];
 ---
 
 <div class="flex items-center gap-4 text-2xl">
   {
-    links.map(({ label, href, icon: Icon }) => (
+    links.map(({ label, href, icon }) => (
       <a
         href={href}
         target="_blank"
@@ -29,7 +29,7 @@ const links: SocialLink[] = [
         title={label}
         class="hover:opacity-60"
       >
-        <Icon aria-hidden="true" />
+        <Icon name={icon} aria-hidden="true" />
       </a>
     ))
   }

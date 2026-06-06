@@ -1,0 +1,56 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Commands
+
+Package manager is **pnpm** (`packageManager: pnpm@11.5.1`). Dev server runs on port **4321**.
+
+```bash
+pnpm dev        # local dev server (astro dev)
+pnpm build      # runs `astro check` then `astro build` -> static output in dist/
+pnpm preview    # serve the built dist/
+pnpm format     # prettier --write . (includes prettier-plugin-astro)
+pnpm astro check  # type-check .astro/.ts (this is the only "test" gate; build fails on type errors)
+```
+
+There is no test runner, linter, or CI config. `astro check` is the sole quality gate and is wired into `build`. A Nix flake (`flake.nix` + `.envrc`/direnv) provides the dev shell.
+
+## Architecture
+
+Static personal site (Astro 4, output to `dist/`). **No UI framework** — the site is authored entirely in `.astro` + vanilla JS, no `.tsx`/`.jsx` components. Icons come from [astro-icon](https://github.com/natemoo-re/astro-icon) (`<Icon name="set:name" />`), which renders inline SVGs at build with zero client JS. Icon sets are Iconify packages: `@iconify-json/simple-icons` (language/brand logos) and `@iconify-json/feather` (GitHub). To add an icon, reference `set:name` — verify the name exists in the installed set first (icons are not resolved by guessing).
+
+### Two content systems, both auto-discovery via `import.meta.glob`
+
+This is the core pattern to understand — content is added by **dropping files**, not by editing registries:
+
+1. **Essays/blog** — drop a `.md` file in `src/pages/essays/`. [src/pages/index.astro](src/pages/index.astro) globs `./essays/*.md` (`eager: true`) and lists them sorted by `date` desc. Each essay's frontmatter must set `layout: ../../layouts/EssayLayout.astro`, `title`, `date` (`YYYY-MM-DD`), optional `description`. `import.meta.glob` is used deliberately instead of `Astro.glob` because the latter throws when the folder is empty.
+2. **Music player** — drop an audio file (`.mp3/.wav/.ogg/.m4a`) in `src/music/`. [src/components/MusicPlayer.astro](src/components/MusicPlayer.astro) globs them with `query: "?url"`; the display title is derived from the filename (`-`/`_` → spaces). With zero files the player renders nothing. See [src/music/README.md](src/music/README.md). The player logic is an `is:inline` vanilla-JS IIFE with track data injected via `define:vars` — no framework, no hydration. It handles play/pause/prev/next/seek/volume, persists volume in `localStorage` (`runnas-vol`), and works around autoplay blocking by starting on first user interaction.
+
+The **`projects`** array, by contrast, is hardcoded in the frontmatter of [src/pages/index.astro](src/pages/index.astro) — edit it there to change the projects carousel.
+
+### Layouts & styling
+
+- [src/layouts/Layout.astro](src/layouts/Layout.astro) is the HTML shell (head, Fira Code from Google Fonts, imports global `src/style.css`). `EssayLayout.astro` wraps it and adds `.essay-prose` typography for markdown.
+- Design is intentionally **brutalist**: monospace everywhere (`* { font-family: "Fira Code" !important }`), black-on-white, hard borders, dotted background. Reusable visual primitives are global CSS classes in [src/style.css](src/style.css): `.box-shadow` (offset hard shadow), `.text-highlight` (inverted inline highlight), `.intro-about-grid`. Tailwind is otherwise used inline; `tailwind.config.cjs` has an empty theme (no custom tokens).
+
+### Pages
+
+Only two routes: `/` ([src/pages/index.astro](src/pages/index.astro), the entire single-page site) and `/essays/<slug>` (rendered markdown).
+
+## Deploy
+
+_TODO: preencher (host, comando de deploy, branch, variáveis de ambiente)._
+
+## Rules for Claude
+
+- Sempre rode `pnpm astro check` antes de concluir qualquer tarefa.
+- Não adicione um framework de UI (React/Vue/etc.) sem confirmar — o site é `.astro` + JS vanilla por opção; ícones via `astro-icon`.
+- Copy do site permanece em **pt-BR**.
+- Commits seguem **Conventional Commits**, com mensagens em **pt-BR** (ex.: `feat: adiciona seção de deploy`).
+
+## Gotchas
+
+- No `site` URL is set in `astro.config.mjs`, so there's no sitemap/canonical SEO output.
+- Content and UI copy are in **Brazilian Portuguese** (`lang="pt-BR"`); keep new copy consistent.
+- Music files must be your own or royalty-free/CC (see music README) — they ship in the public build.

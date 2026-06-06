@@ -1,24 +1,18 @@
 ---
-import {
-  SiPython,
-  SiTypescript,
-  SiJavascript,
-  SiRust,
-  SiNixos,
-} from "react-icons/si";
+import { Icon } from "astro-icon/components";
 
 interface Language {
   name: string;
   query: string; // valor usado em ?language= no GitHub
-  icon: typeof SiPython;
+  icon: string; // nome do ícone Iconify (set:nome)
 }
 
 const languages: Language[] = [
-  { name: "Python", query: "Python", icon: SiPython },
-  { name: "TypeScript", query: "TypeScript", icon: SiTypescript },
-  { name: "JavaScript", query: "JavaScript", icon: SiJavascript },
-  { name: "Rust (estudando)", query: "Rust", icon: SiRust },
-  { name: "Nix (estudando)", query: "Nix", icon: SiNixos },
+  { name: "Python", query: "Python", icon: "simple-icons:python" },
+  { name: "TypeScript", query: "TypeScript", icon: "simple-icons:typescript" },
+  { name: "JavaScript", query: "JavaScript", icon: "simple-icons:javascript" },
+  { name: "Rust (estudando)", query: "Rust", icon: "simple-icons:rust" },
+  { name: "Nix (estudando)", query: "Nix", icon: "simple-icons:nixos" },
 ];
 
 const repoBase = "https://github.com/therunnas?tab=repositories&language=";
@@ -26,7 +20,7 @@ const repoBase = "https://github.com/therunnas?tab=repositories&language=";
 
 <div class="flex flex-wrap items-center gap-3 text-3xl">
   {
-    languages.map(({ name, query, icon: Icon }) => (
+    languages.map(({ name, query, icon }) => (
       <a
         href={`${repoBase}${encodeURIComponent(query)}`}
         target="_blank"
@@ -35,7 +29,7 @@ const repoBase = "https://github.com/therunnas?tab=repositories&language=";
         title={name}
         class="hover:opacity-60"
       >
-        <Icon aria-hidden="true" />
+        <Icon name={icon} aria-hidden="true" />
       </a>
     ))
   }
