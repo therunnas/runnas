@@ -40,7 +40,13 @@ Only two routes: `/` ([src/pages/index.astro](src/pages/index.astro), the entire
 
 ## Deploy
 
-_TODO: preencher (host, comando de deploy, branch, variáveis de ambiente)._
+Hospedado na **Vercel**, deploy automático a partir da branch `main`.
+
+- Framework preset **Astro** (auto-detectado pela Vercel). Build: `pnpm build`; output dir: `dist/`.
+- Saída **estática** — sem adapter, não precisa de `@astrojs/vercel`.
+- Push na `main` → deploy de produção; pushes em outras branches/PRs → preview deploys.
+- Sem variáveis de ambiente no momento.
+- O domínio de produção precisa bater com `site` em `astro.config.mjs` (de onde saem canonical, `og:url` e o sitemap). Trocar de domínio = atualizar `site` **e** a linha `Sitemap:` em `public/robots.txt`.
 
 ## Rules for Claude
 
