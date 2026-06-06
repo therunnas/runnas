@@ -12,6 +12,7 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+    "@astrojs/sitemap": "^3.2.1",
     "@astrojs/tailwind": "^5.1.0",
     "@iconify-json/feather": "^1.2.1",
     "@iconify-json/simple-icons": "^1.2.85",

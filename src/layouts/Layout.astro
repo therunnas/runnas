@@ -1,13 +1,20 @@
 ---
 import "../style.css";
+import SEO from "../components/SEO.astro";
 
 interface Props {
   title: string;
   description?: string;
+  image?: string;
+  type?: "website" | "article";
 }
 
-const { title, description = "Runnas — construo coisas por curiosidade." } =
-  Astro.props;
+const {
+  title,
+  description = "Runnas — construo coisas por curiosidade.",
+  image,
+  type,
+} = Astro.props;
 ---
 
 <!doctype html>
@@ -15,10 +22,9 @@ const { title, description = "Runnas — construo coisas por curiosidade." } =
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <meta name="description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
-    <title>{title}</title>
+    <SEO title={title} description={description} image={image} type={type} />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

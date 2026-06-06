@@ -51,6 +51,7 @@ _TODO: preencher (host, comando de deploy, branch, variáveis de ambiente)._
 
 ## Gotchas
 
-- No `site` URL is set in `astro.config.mjs`, so there's no sitemap/canonical SEO output.
+- **`@astrojs/sitemap` is pinned to `3.2.1`** on purpose. Versions `>= 3.6` read routes from the `astro:routes:resolved` hook, which only exists in **Astro 5** — on this Astro 4 project they fail the build with `Cannot read properties of undefined (reading 'reduce')`. Do not bump sitemap (or run a blanket `pnpm update`) until Astro itself is upgraded to 5.
+- SEO lives in [src/components/SEO.astro](src/components/SEO.astro), rendered inside `<head>` by `Layout.astro` so every page is covered. It builds absolute canonical/OG/Twitter URLs from `Astro.site` (the `site` value in `astro.config.mjs`, currently `https://runnas.dev` — update if the domain changes). `EssayLayout` passes `type="article"`; the default OG image is `/me.webp`.
 - Content and UI copy are in **Brazilian Portuguese** (`lang="pt-BR"`); keep new copy consistent.
 - Music files must be your own or royalty-free/CC (see music README) — they ship in the public build.

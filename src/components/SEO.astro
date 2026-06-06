@@ -1,0 +1,43 @@
+---
+// Meta tags de SEO + Open Graph + Twitter Card.
+// Renderizado dentro do <head> pelo Layout, então cobre todas as páginas.
+// As URLs absolutas dependem de `site` em astro.config.mjs (Astro.site).
+interface Props {
+  title: string;
+  description: string;
+  image?: string; // caminho relativo à raiz, ex.: /me.webp
+  type?: "website" | "article";
+}
+
+const {
+  title,
+  description,
+  image = "/me.webp",
+  type = "website",
+} = Astro.props;
+
+const siteName = "Runnas";
+// Astro.site vem de `site` no config; em dev/preview também resolve.
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const imageUrl = new URL(image, Astro.site).href;
+---
+
+<!-- Primárias -->
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+
+<!-- Open Graph -->
+<meta property="og:type" content={type} />
+<meta property="og:site_name" content={siteName} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={imageUrl} />
+<meta property="og:locale" content="pt_BR" />
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={imageUrl} />

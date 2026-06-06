@@ -12,7 +12,11 @@ interface Props {
 const { frontmatter } = Astro.props;
 ---
 
-<Layout title={frontmatter.title} description={frontmatter.description}>
+<Layout
+  title={frontmatter.title}
+  description={frontmatter.description}
+  type="article"
+>
   <a href="/" class="text-sm underline hover:no-underline">← voltar</a>
 
   <article class="mt-8 max-w-2xl">

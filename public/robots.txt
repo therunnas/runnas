@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://runnas.dev/sitemap-index.xml
